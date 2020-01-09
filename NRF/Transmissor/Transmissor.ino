@@ -1,28 +1,52 @@
 #include <SPI.h>
-#include <nRF24L01.h> //INCLUSÃO DE BIBLIOTECA
-#include <RF24.h> //INCLUSÃO DE BIBLIOTECA
- 
-RF24 radio(9, 10); //CRIA UMA INSTÂNCIA UTILIZANDO OS PINOS (CE, CSN)
- 
-const byte address[6] = "00002"; //CRIA UM ENDEREÇO PARA ENVIO DOS
-//DADOS (O TRANSMISSOR E O RECEPTOR DEVEM SER CONFIGURADOS COM O MESMO ENDEREÇO)
- 
-void setup() {
+#include <RH_NRF24.h>
+
+
+RH_NRF24 nrf24(8, 7); // use this to be electrically compatible with Mirf
+
+void setup() 
+{
   Serial.begin(9600);
-  radio.begin(); //INICIALIZA A COMUNICAÇÃO SEM FIO
-  radio.openWritingPipe(address); //DEFINE O ENDEREÇO PARA ENVIO DE DADOS AO RECEPTOR
-  radio.setPALevel(RF24_PA_HIGH); //DEFINE O NÍVEL DO AMPLIFICADOR DE POTÊNCIA
-  radio.stopListening(); //DEFINE O MÓDULO COMO TRANSMISSOR (NÃO RECEBE DADOS)
+  while (!Serial) 
+    ; // wait for serial port to connect. Needed for Leonardo only
+  if (!nrf24.init())
+    Serial.println("init failed");
+  // Defaults after init are 2.402 GHz (channel 2), 2Mbps, 0dBm
+  if (!nrf24.setChannel(1))
+    Serial.println("setChannel failed");
+  if (!nrf24.setRF(RH_NRF24::DataRate2Mbps, RH_NRF24::TransmitPower0dBm))
+    Serial.println("setRF failed");    
 }
- 
-void loop() {
-  const char text[] = "MasterWalker Shop"; //VARIÁVEL RECEBE A MENSAGEM A SER TRANSMITIDA
-  int result = radio.write(&text, sizeof(text));
+
+
+void loop()
+{
+  Serial.println("Sending to nrf24_server");
+  // Send a message to nrf24_server
+  uint8_t data[] = "Hello World!";
+  nrf24.send(data, sizeof(data));
   
-  if (result)  {
-    Serial.println("Enviou");            //ENVIA AO RECEPTOR A MENSAGEM
-  }else {
-    Serial.println("Nao enviou");
+  nrf24.waitPacketSent();
+  // Now wait for a reply
+  uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
+  uint8_t len = sizeof(buf);
+
+  if (nrf24.waitAvailableTimeout(500))
+  { 
+    // Should be a reply message for us now   
+    if (nrf24.recv(buf, &len))
+    {
+      Serial.print("got reply: ");
+      Serial.println((char*)buf);
+    }
+    else
+    {
+      Serial.println("recv failed");
+    }
   }
-  delay(5000); //INTERVALO DE 1 SEGUNDO
+  else
+  {
+    Serial.println("No reply, is nrf24_server running?");
+  }
+  delay(400);
 }

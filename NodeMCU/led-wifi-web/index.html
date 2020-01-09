@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WiFi-LED</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="js/index.js"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="card-deck">
+            <div class="card text-center">
+                <div class="text-align-center">
+                    <img class="card-img-top w-75 mt-3" src="img/lamp.png" alt="Card image cap">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-header" id="led_esquerda">Lampâda Esquerda - OFF</h5>
+                    <div class="card-text">
+                        <button class="btn btn-success mt-3" id="btn-esquerda" onclick="toggleLamp('esquerda')">Acender Lampada</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card text-center ">
+                <div class="text-align-center">
+                    <img class="card-img-top w-75 mt-3" src="img/lamp.png" alt="Card image cap">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-header" id="led_direita" >Lampâda Direita - OFF</h5>
+                    <div class="card-text">
+                        <button class="btn btn-success mt-3" id="btn-direita" onclick="toggleLamp('direita')">Acender Lampada</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
